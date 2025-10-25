@@ -36,17 +36,17 @@ const Subscripion = () => {
       </View>
 
       {/* body */}
-      <View style={[styles.subscriptionbody,{marginTop:space.titleTop}]}>
+      <View style={[styles.subscriptionbody]}>
         <Text style={styles.title}>Subscrition Details</Text>
         <Text style={styles.subtitleText}>Your Subscription is Active</Text>
         <Text style={[styles.activeText,{marginVertical:space.titleToSubtitle}]}>  X Days Left {}</Text>
 
         <View style={styles.contactContainer}>
-          <Ionicons name="logo-whatsapp" size={36} color={COLORS.text2}/>
+          <Ionicons name="logo-whatsapp" size={20} color={COLORS.text2}/>
           <Text style={styles.subtitleText}>  +25 71216148</Text>
         </View>
         <View style={styles.contactContainer}>
-          <Ionicons name="mail-outline" size={36} color={COLORS.text2}/>
+          <Ionicons name="mail-outline" size={20} color={COLORS.text2}/>
           <Text style={styles.subtitleText}>  info@bukia.bi</Text>
         </View>
 

@@ -88,25 +88,21 @@ overlay: {
 //subscription specific
 subscriptionbody:{
   backgroundColor:COLORS.background1,
-  margin:-20,
   padding:20,
-  flex:1,
-  borderTopLeftRadius:20,
-  borderTopRightRadius:20,
+  borderRadius:12,
 },
   title: {
-    fontSize: 32,
-    fontWeight: "bold",
+    fontSize: 24,
     color: COLORS.text,
   },
     subtitleText:{
-    fontSize:20,
+    fontSize:16,
     fontWeight: "medium",
     color:COLORS.text2
   },
  activeText:{
     color:COLORS.primary,
-    fontSize:28,
+    fontSize:24,
     textAlign: "center",
     fontWeight: "bold",    
   },
@@ -117,7 +113,7 @@ subscriptionbody:{
     justifyContent:'flex-start',
   },
   button: {
-    backgroundColor: COLORS.add,
+    backgroundColor: COLORS.primary,
     borderRadius: 12,
     padding: 14,
     alignItems: "center",

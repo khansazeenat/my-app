@@ -109,7 +109,7 @@ export default function MenuModal({ visible, onClose }: MenuModalProps) {
           <View style={styles.menuSeparator} />
           
           {/* Log out */}
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => router.replace('/auth/sign-in')}>
             <Ionicons name="log-out-outline" size={20} color={COLORS.primary} />
             <Text style={styles.menuText}>Log out</Text>
           </TouchableOpacity>
