@@ -37,12 +37,12 @@ export default function EditItem() {
             <TouchableOpacity onPress={() => router.back()}>
               <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
             </TouchableOpacity>
-            <Text style={styles.backText}>Edit Item</Text>
+            <Text style={styles.backText}>Change Product</Text>
           </View>
-          <Text style={{ marginTop: 8, color: COLORS.placeHolderText }}>Change any product detail and save</Text>
+          <Text style={{ marginTop: 8, color: COLORS.placeHolderText }}>Change your product detail and save them</Text>
 
           <View style={{ marginTop: space.inputWrapper }}>
-            <Text style={{ marginBottom: 6, fontSize: 14 }}>Edit Name</Text>
+            <Text style={{ marginBottom: 6, fontSize: 14 }}>Change Name</Text>
             <TextInput
               style={[styles.input, { padding: 12, borderRadius: 10 }]}
               value={name}
@@ -52,7 +52,7 @@ export default function EditItem() {
 
           <View style={{ marginTop: space.inputWrapper, flexDirection: "row", gap: 12 }}>
             <View style={{ flex: 1 }}>
-              <Text style={{ marginBottom: 6, fontSize: 14 }}>Edit Quantity (Qty)</Text>
+              <Text style={{ marginBottom: 6, fontSize: 14 }}>Change Quantity (Qty)</Text>
               <TextInput
                 style={[styles.input, { padding: 12, borderRadius: 10 }]}
                 value={qty}
@@ -62,7 +62,7 @@ export default function EditItem() {
             </View>
 
             <View style={{ width: 110 }}>
-              <Text style={{ marginBottom: 6, fontSize: 14 }}>Edit Price</Text>
+              <Text style={{ marginBottom: 6, fontSize: 14 }}>Change Price</Text>
               <TextInput
                 style={[styles.input, { padding: 12, borderRadius: 10 }]}
                 value={price}
@@ -72,7 +72,7 @@ export default function EditItem() {
             </View>
           </View>
 
-          <Text style={{ marginTop: 16, marginBottom: 8 }}>Edit Product Image</Text>
+          <Text style={{ marginTop: 16, marginBottom: 8 }}>Change Product Image</Text>
           <TouchableOpacity
             onPress={pickImage}
             style={{
@@ -105,9 +105,7 @@ export default function EditItem() {
             )}
           </TouchableOpacity>
 
-          <View style={{ flex: 1 }} />
-
-          <View style={{ flexDirection: "row", gap: 12 }}>
+          <View style={{ flexDirection: "row", gap: 12, marginTop:20 }}>
             <TouchableOpacity style={[styles.otherButton, { flex: 1 }]} onPress={() => router.back()}>
               <Text style={[styles.buttonText, { color: COLORS.primary }]}>Cancel</Text>
             </TouchableOpacity>

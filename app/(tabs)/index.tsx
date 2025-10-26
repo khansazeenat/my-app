@@ -6,8 +6,11 @@ import { TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '@/constants/colors';
 import { useAddItem } from "@/context/AddItemContext";
+import { useRouter } from 'expo-router';
 
 const home = () => {
+  const router = useRouter();
+  
   const { businessName, logoUri } = useSignUp();
   const { items } = useAddItem();
 
@@ -32,17 +35,23 @@ const home = () => {
       <View>   
         {/* Sold tdy */}
         <View style={styles.textContainer}>
-          <Text></Text>
-          <Text></Text>
+          <Text style={styles.text}>Products Sold Today:</Text>
+          <Text style={styles.text2}>12</Text>
         </View>
         {/* revenue tdy */}
         <View style={styles.textContainer}>
-          <Text></Text>
-          <Text></Text>
+          <Text style={styles.text}>Today's Revenue:</Text>
+          <Text style={styles.text2}>200,000 Fbu</Text>
         </View>
 
         {/* Weekly graphs  */}
-        <View style={styles.textContainer}></View>
+        <View style={styles.textContainer}>
+          <Text style={styles.text}>This Week</Text>
+          <TouchableOpacity style={styles.button}
+           onPress={() => router.push('/stock/stockHistory')}>
+            <Text style={styles.buttonText}>View Full History</Text>
+          </TouchableOpacity>
+        </View>
         
         {/* Boxes Container*/}
         <View>          
@@ -66,13 +75,7 @@ const home = () => {
             </View>
             
           )}
-            ListEmptyComponent={() => (
-            <View style={{padding: 20, alignItems: "center" }}>
-              <Text style={{ color: "gray", fontSize: 16 }}>
-                Helloooo, You haven’t done anything yet. Add your first stock item to get started!
-              </Text>
-            </View>
-          )}
+          
         />        
         </View>
     </View>

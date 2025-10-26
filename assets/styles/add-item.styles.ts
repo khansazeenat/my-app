@@ -86,4 +86,20 @@ businessDetailheader:{
     fontWeight: "regular",
 
   },
+text:{
+  color:COLORS.primary,
+  fontSize:16,
+},
+contactContainer:{
+  flexDirection:"row",
+  justifyContent:"space-between",
+  alignItems:"center",
+
+},
+  menuSeparator: {
+    height: 1,
+    marginVertical:20,
+    backgroundColor: "rgba(60,60,67,0.36)",
+  },
+
 });
