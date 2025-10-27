@@ -1,159 +1,253 @@
-import { View, Text,TextInput,Dimensions, TouchableOpacity, FlatList, Image } from 'react-native'
-import React, { useState } from 'react'
-import { styles } from '../../../assets/styles/profile.styles'
-import { useRouter } from 'expo-router'
-import { COLORS } from '@/constants/colors';
-import { Ionicons, MaterialCommunityIcons, Foundation } from '@expo/vector-icons'
-import MenuModal from '@/app/(tabs)/profile/humburger-menu';
-import { useSignUp } from '@/context/SignUpContext'; // 👈 import context
-import { useAddItem } from '@/context/AddItemContext';
+import {
+  View,
+  Text,
+  TextInput,
+  Dimensions,
+  TouchableOpacity,
+  FlatList,
+  Image,
+  Alert,
+} from "react-native";
+import React, { useState } from "react";
+import { styles } from "../../../assets/styles/profile.styles";
+import { useRouter } from "expo-router";
+import { COLORS } from "@/constants/colors";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import MenuModal from "@/app/(tabs)/profile/humburger-menu";
+import { useSignUp } from "@/context/SignUpContext";
+import { useAddItem, Item } from "@/context/AddItemContext";
+import { useSoldItems } from "@/context/SoldItemsContext";
+import { Swipeable } from "react-native-gesture-handler";
+import Toast from "react-native-toast-message";
 
-// Get screen height
-const { height } = Dimensions.get('window');
+const { height } = Dimensions.get("window");
+const space = { menuToHeader: height * 0.01 };
 
-// Example spacing based on screen height
-const space = {
-menuToHeader: height * 0.01,     // 2% of screen height
-};
 const Profile = () => {
   const router = useRouter();
-  const { businessName, logoUri } = useSignUp();
-  // const { items } = useAddItem();
-  const items = [
-  {
-    id: "1",
-    itemName: "Coca-Cola 500ml",
-    itemQty: 24,
-    itemImage: "https://images.unsplash.com/photo-1602009486820-9b3e0f6c1f8e",
-  },
-  {
-    id: "2",
-    itemName: "Sprite 500ml",
-    itemQty: 18,
-    itemImage: "https://images.unsplash.com/photo-1625938144515-94dca5c0021b",
-  },
-  {
-    id: "3",
-    itemName: "Fanta Orange 500ml",
-    itemQty: 15,
-    itemImage: "https://images.unsplash.com/photo-1625938146084-33a907be0a47",
-  },
-  {
-    id: "4",
-    itemName: "Bottled Water 1L",
-    itemQty: 30,
-    itemImage: "https://images.unsplash.com/photo-1585238342028-1f8b99bca54b",
-  },
-  {
-    id: "5",
-    itemName: "Bread Loaf",
-    itemQty: 12,
-    itemImage: "https://images.unsplash.com/photo-1608198093002-ad4e00548402",
-  },
-  {
-    id: "6",
-    itemName: "Cooking Oil 1L",
-    itemQty: 20,
-    itemImage: "https://images.unsplash.com/photo-1600172454370-7e93074fdaa3",
-  },
-  {
-    id: "7",
-    itemName: "Rice (5kg Bag)",
-    itemQty: 10,
-    itemImage: "https://images.unsplash.com/photo-1625938468029-301c820e9f37",
-  },
-  {
-    id: "8",
-    itemName: "Sugar 1kg",
-    itemQty: 25,
-    itemImage: "https://images.unsplash.com/photo-1587734844765-6c6c4b60a05e",
-  },
-  {
-    id: "9",
-    itemName: "Salt 500g",
-    itemQty: 40,
-    itemImage: "https://images.unsplash.com/photo-1625938151435-30c22a15f13a",
-  },
-  {
-    id: "10",
-    itemName: "Tomato Sauce",
-    itemQty: 14,
-    itemImage: "https://images.unsplash.com/photo-1625938181538-65d36e08190d",
-  },
-];
-
+  const { items, reduceItemQty, deleteItem } = useAddItem();
+  const { addSoldItems } = useSoldItems();
   const [searchText, setSearchText] = useState("");
   const [menuVisible, setMenuVisible] = useState(false);
 
+  const [selectedItems, setSelectedItems] = useState<{ [id: string]: number }>({});
+  const [totalSelected, setTotalSelected] = useState(0);
+  const [showTotal, setShowTotal] = useState(false);
+
+  const handleMinus = (itemId: string) => {
+    const item = items.find((i) => i.id === itemId);
+    if (!item || Number(item.itemQty) <= 0) return;
+
+    const newQty = (selectedItems[itemId] || 0) + 1;
+    if (newQty <= Number(item.itemQty)) {
+      setSelectedItems({ ...selectedItems, [itemId]: newQty });
+      setTotalSelected(totalSelected + 1);
+      setShowTotal(true);
+    }
+  };
+
+  const handleEditQuantity = (itemId: string) => {
+    if (showTotal) return; // disable edit while total active
+    const item = items.find((i) => i.id === itemId);
+    if (!item || Number(item.itemQty) <= 0) return;
+
+    Alert.prompt(
+      "Select Quantity",
+      `Enter number of ${item.itemName} to take out:`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "OK",
+          onPress: (text: string | undefined) => {
+            const num = Number(text);
+            const stock = Number(item.itemQty);
+            if (!isNaN(num) && num > 0 && num <= stock) {
+              const prevQty = selectedItems[itemId] || 0;
+              setSelectedItems({ ...selectedItems, [itemId]: num });
+              setTotalSelected(totalSelected - prevQty + num);
+              setShowTotal(true);
+            } else {
+              Alert.alert("Invalid number", `Enter a number between 1 and ${stock}`);
+            }
+          },
+        },
+      ],
+      "plain-text",
+      "0",
+      "number-pad"
+    );
+  };
+
+  const handleDelete = (itemId: string) => {
+    if (showTotal) return; // disable delete while total active
+    Alert.alert(
+      "Delete Item",
+      "Are you sure? This action is irreversible.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            deleteItem(itemId);
+            const qtyRemoved = selectedItems[itemId] || 0;
+            if (qtyRemoved > 0) setTotalSelected(totalSelected - qtyRemoved);
+            const newSelection = { ...selectedItems };
+            delete newSelection[itemId];
+            setSelectedItems(newSelection);
+            Toast.show({
+              type: "success",
+              text1: "Item deleted",
+              position: "bottom",
+              visibilityTime: 1500,
+            });
+          },
+        },
+      ]
+    );
+  };
+
+  const handleConfirm = () => {
+    if (totalSelected === 0) return;
+    Alert.alert(
+      "Confirm Sale",
+      "Are you sure you want to confirm this sale?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Confirm",
+          onPress: () => {
+            Object.entries(selectedItems).forEach(([id, qty]) => {
+              reduceItemQty(id, qty);
+            });
+
+            const sold = Object.entries(selectedItems).map(([id, qty]) => {
+              const item = items.find((i) => i.id === id)!;
+              return {
+                id: item.id,
+                name: item.itemName,
+                qty,
+                price: Number(item.itemPrice),
+                imageUri: item.itemImage ?? null,
+                time: new Date().toISOString(),
+              };
+            });
+            addSoldItems(sold);
+
+            setSelectedItems({});
+            setTotalSelected(0);
+            setShowTotal(false);
+          },
+        },
+      ]
+    );
+  };
+
+  const handleClear = () => {
+    setSelectedItems({});
+    setTotalSelected(0);
+    setShowTotal(false);
+  };
+
+  const renderRightActions = (itemId: string) => (
+    <TouchableOpacity
+      style={{ backgroundColor: "red", justifyContent: "center", alignItems: "center", width: 80 }}
+      onPress={() => handleDelete(itemId)}
+    >
+      <Text style={{ color: "white", fontWeight: "bold" }}>Delete</Text>
+    </TouchableOpacity>
+  );
+
+  const renderLeftActions = (itemId: string) => (
+    <TouchableOpacity
+      style={{ backgroundColor: COLORS.primary, justifyContent: "center", alignItems: "center", width: 80 }}
+      onPress={() =>
+        router.push({
+          pathname: "/add-item/edit-item",
+          params: { id: itemId },
+        })
+      }
+    >
+      <Text style={{ color: "white", fontWeight: "bold" }}>Edit</Text>
+    </TouchableOpacity>
+  );
+
+  const filteredItems = items.filter((item) =>
+    item.itemName.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={{alignItems: "flex-end"}} onPress={() => setMenuVisible(true)}>
+      <Toast />
+      <TouchableOpacity style={{ alignItems: "flex-end" }} onPress={() => setMenuVisible(true)}>
         <Ionicons name="menu" size={24} color={COLORS.primary} />
       </TouchableOpacity>
       <MenuModal visible={menuVisible} onClose={() => setMenuVisible(false)} />
 
+      <View style={[styles.searchContainer, { marginTop: space.menuToHeader }]}>
+        <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
+        <TextInput
+          style={styles.SearchInput}
+          placeholder="Search..."
+          placeholderTextColor={COLORS.placeHolderText}
+          value={searchText}
+          onChangeText={setSearchText}
+        />
+      </View>
 
-      {/* Seach Bar */}
-      <View style={[styles.searchContainer,{marginTop:space.menuToHeader}]}>
-      <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
-
-      <TextInput
-        style={styles.SearchInput}
-        placeholder="Search..."
-        placeholderTextColor={COLORS.placeHolderText}
-        value={searchText}
-        onChangeText={setSearchText}
-      />
-      
-    </View>
-      {/* Item List */}
       <FlatList
-        // 1️⃣ The data you want to display
-        data={items}
-        // 2️⃣ A unique key for each item (important for performance)
+        data={filteredItems}
         keyExtractor={(item) => item.id}
-        // 3️⃣ Style for the list’s content container
         contentContainerStyle={{ marginTop: 8 }}
-        // 4️⃣ How to render each item (like a map function)
-        renderItem={({ item }) => (
-          <View style={styles.itemRow}>
-            {/* Item Image/Icon */}
-            <View style={styles.itemImage}>
-              {item.itemImage ? (
-                <Image
-                source={{uri: item.itemImage}}
-                style={styles.itemImage}
-                />
-              ) :(
-                
-              <MaterialCommunityIcons
-                name="image-plus"
-                size={24}
-                color={COLORS.placeHolderText}
-                style={styles.itemImageIcon}
-              />
-              )}
-            </View>
-            <View style={styles.stockDetails}>
-            {/* Item Name and price */}
-            <Text style={styles.itemName}>{item.itemName}</Text>
-              <Text style={styles.itemStock}>{item.itemQty} in Stock</Text>
-            </View>
-            {/* Stock and Buttons */}
-            <View style={styles.stockSection}>
-              <TouchableOpacity style={styles.addBtn}>
-                <Text style={styles.btnText}>-</Text>
-              </TouchableOpacity>
-              <View style={styles.separator}/>
-              <TouchableOpacity style={styles.addBtn}>
-                <Text style={styles.btnText}>3</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
+        renderItem={({ item }) => {
+          const currentQty = selectedItems[item.id] || 0;
+          const stockNum = Number(item.itemQty);
+          const isOutOfStock = stockNum === 0;
+
+          return (
+            <Swipeable
+              renderRightActions={() => !showTotal && renderRightActions(item.id)}
+              renderLeftActions={() => !showTotal && renderLeftActions(item.id)}
+            >
+              <View style={[styles.itemRow, isOutOfStock && { opacity: 0.5 }]}>
+                <View style={styles.itemImage}>
+                  {item.itemImage ? (
+                    <Image source={{ uri: item.itemImage }} style={styles.itemImage} />
+                  ) : (
+                    <MaterialCommunityIcons
+                      name="image-plus"
+                      size={24}
+                      color={COLORS.placeHolderText}
+                      style={styles.itemImageIcon}
+                    />
+                  )}
+                </View>
+                <View style={styles.stockDetails}>
+                  <Text style={styles.itemName}>{item.itemName}</Text>
+                  <Text style={styles.itemStock}>{item.itemQty} in Stock</Text>
+                </View>
+                <View style={styles.stockSection}>
+                  <TouchableOpacity
+                    style={styles.addBtn}
+                    onPress={() => handleMinus(item.id)}
+                    disabled={isOutOfStock || currentQty >= stockNum}
+                  >
+                    <Text style={styles.btnText}>-</Text>
+                  </TouchableOpacity>
+                  <View style={styles.separator} />
+                  <TouchableOpacity
+                    onPress={() => handleEditQuantity(item.id)}
+                    disabled={isOutOfStock || showTotal}
+                  >
+                    <Text style={styles.btnText}>{currentQty}</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Swipeable>
+          );
+        }}
         ListEmptyComponent={() => (
-          <View style={{padding: 20, alignItems: "center" }}>
+          <View style={{ padding: 20, alignItems: "center" }}>
             <Text style={{ color: "gray", fontSize: 16 }}>
               You don’t have any stock items yet. Add your first item to get started!
             </Text>
@@ -161,23 +255,26 @@ const Profile = () => {
         )}
       />
 
-      {/* Total */}
-      <View style={styles.cartContainer}>
-        <View style={styles.totalContainer}>
-          <Text style={styles.totalText}>Total Items: {}</Text>
-        </View>
-        <View  style={styles.totalItemsContainer}>
-          <TouchableOpacity style={styles.clearBtn}>
-            <Text style={styles.clearText}>Clear All</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.comfirmBtn}>
-            <Text style={styles.comfirmText}>Comfirm</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      {showTotal && (
+        <View style={styles.cartContainer}>
+          <View style={styles.totalContainer}>
+            <Text style={styles.totalText}>Total Items: {totalSelected}</Text>
 
+            <View style={styles.totalItemsContainer}>
+              <TouchableOpacity onPress={handleClear} style={styles.clearBtn}>
+                <Text style={styles.clearText}>Clear</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={handleConfirm} style={styles.comfirmBtn}>
+                <Text style={styles.comfirmText}>Confirm</Text>
+              </TouchableOpacity>
+            </View>
+
+          </View>
+        </View>
+      )}
     </View>
-  )
-}
+  );
+};
 
-export default Profile
+export default Profile;

@@ -1,13 +1,17 @@
 import { View, Text } from 'react-native'
 import React from 'react'
-import {styles} from '../../assets/styles/settings.styles'
+import SafeScreen from '@/assets/components/SafeScreen';
+import { styles } from "../../assets/styles/settings.styles";
 
 
 const termsOfUse = () => {  
   return (
-    <View>
-      <Text>termsOfUse</Text>
+
+    <SafeScreen>
+    <View style={styles.container}>
+      <Text style={styles.title}>termsOfUse Settings Will go Here</Text>
     </View>
+    </SafeScreen>
   )
 }
 

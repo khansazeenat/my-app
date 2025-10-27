@@ -1,4 +1,3 @@
-// context/AddItemContext.tsx
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 export type Item = {
@@ -22,6 +21,9 @@ type AddItemContextType = {
   items: Item[];
   addItemToList: (time?: string) => void;
   resetItem: () => void;
+  deleteItem: (id: string) => void;
+  reduceItemQty: (id: string, amount: number) => void;
+  updateItem: (id: string, data: Partial<Omit<Item, "id">>) => void; // 🆕 added
 };
 
 const AddItemContext = createContext<AddItemContextType | undefined>(undefined);
@@ -33,22 +35,9 @@ export const AddItemProvider = ({ children }: { children: ReactNode }) => {
   const [itemImage, setItemImage] = useState<string | null>(null);
   const [items, setItems] = useState<Item[]>([]);
 
-  
-  // 🧩 2. Paste your log handlers right here
-  const handleSetItemName = (name: string) => {
-    console.log("🟢 itemName updated:", name);
-    setItemName(name);
-  };
-
-  const handleSetItemQty = (qty: string) => {
-    console.log("🟡 itemQty updated:", qty);
-    setItemQty(qty);
-  };
-
-  const handleSetItemPrice = (price: string) => {
-    console.log("🟣 itemPrice updated:", price);
-    setItemPrice(price);
-  };
+  const handleSetItemName = (name: string) => setItemName(name);
+  const handleSetItemQty = (qty: string) => setItemQty(qty);
+  const handleSetItemPrice = (price: string) => setItemPrice(price);
 
   const resetItem = () => {
     setItemName("");
@@ -58,10 +47,7 @@ export const AddItemProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const addItemToList = (time?: string) => {
-    if (!itemName || !itemQty || !itemPrice) {
-      console.log("Cannot add item: missing fields", { itemName, itemQty, itemPrice });
-      return;
-    }
+    if (!itemName || !itemQty || !itemPrice) return;
 
     const newItem: Item = {
       id: Date.now().toString(),
@@ -72,30 +58,45 @@ export const AddItemProvider = ({ children }: { children: ReactNode }) => {
       itemTime: time || new Date().toLocaleString(),
     };
 
-    setItems((prev) => {
-      const updated = [...prev, newItem];
-      console.log("Item added:", newItem);
-      console.log("Updated items array:", updated);
-      return updated;
-    });
-
+    setItems(prev => [...prev, newItem]);
     resetItem();
+  };
+
+  const deleteItem = (id: string) => {
+    setItems(prev => prev.filter(item => item.id !== id));
+  };
+
+  const reduceItemQty = (id: string, amount: number) => {
+    setItems(prev =>
+      prev.map(item =>
+        item.id === id
+          ? { ...item, itemQty: String(Math.max(Number(item.itemQty) - amount, 0)) }
+          : item
+      )
+    );
+  };
+
+  const updateItem = (id: string, data: Partial<Omit<Item, "id">>) => {
+    setItems(prev => prev.map(item => item.id === id ? { ...item, ...data } : item));
   };
 
   return (
     <AddItemContext.Provider
       value={{
         itemName,
-        setItemName: handleSetItemName, // 👈 use handler instead
+        setItemName: handleSetItemName,
         itemQty,
-        setItemQty: handleSetItemQty,   // 👈 use handler instead
+        setItemQty: handleSetItemQty,
         itemPrice,
-        setItemPrice: handleSetItemPrice, // 👈 use handler instead
+        setItemPrice: handleSetItemPrice,
         itemImage,
         setItemImage,
         items,
         addItemToList,
         resetItem,
+        deleteItem,
+        reduceItemQty,
+        updateItem, // 🆕 added
       }}
     >
       {children}

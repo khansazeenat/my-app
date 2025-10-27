@@ -22,21 +22,31 @@ const SignUp2 = () => {
   const [usePhone, setUsePhone] = useState(true);
   const phoneInputRef = useRef<TextInput | null>(null);
   const emailInputRef = useRef<TextInput | null>(null);
+const [phoneError, setPhoneError] = useState('');
+const [emailError, setEmailError] = useState('');
 
-  const toggleInput = () => {
-    if (usePhone) phoneInputRef.current?.blur();
-    else emailInputRef.current?.blur();
-    setUsePhone(prev => !prev);
-    setTimeout(() => {
-      if (usePhone) emailInputRef.current?.focus();
-      else phoneInputRef.current?.focus();
-    }, 50);
-  };
 
   const handleNext = () => {
-    if (usePhone && !phone.trim()) return;
-    if (!usePhone && !email.trim()) return;
-    router.push('/auth/sign-up-step3'); // 👈 redirect to homepage
+     let valid = true;
+        if (!phone.trim()) {
+        setPhoneError('Phone Number is required');
+        phoneInputRef.current?.focus();
+        valid = false;
+      } else {
+        setPhoneError('');
+      }
+
+      if (!email.trim()) {
+        setEmailError('Email is required');
+        if (valid) emailInputRef.current?.focus(); // focus only if phone is filled
+        valid = false;
+      } else {
+        setEmailError('');
+      }
+
+      if (!valid) return;
+
+      router.push('/auth/sign-up-step3');
   };
 
   return (
@@ -54,44 +64,35 @@ const SignUp2 = () => {
 
           <ProgressBar step={2} />
           <Text style={[styles.normalTitle, { marginTop: space.titleTop, textAlign: 'left' }]}>
-            Phone Number or Email
+            Your Email and Phone Number
           </Text>
 
-          <View style={[styles.inputWrapper, { marginTop: space.subtitleToInput }]}>
-            {usePhone ? (
-              <>
-                <Text style={styles.label}>Phone Number</Text>
-                <TextInput
-                  ref={phoneInputRef}
-                  style={styles.input}
-                  placeholder="Enter your phone number"
-                  placeholderTextColor={COLORS.placeHolderText}
-                  keyboardType="phone-pad"
-                  value={phone}
-                  onChangeText={setPhone}
-                />
-              </>
-            ) : (
-              <>
-                <Text style={styles.label}>Email</Text>
-                <TextInput
-                  ref={emailInputRef}
-                  style={styles.input}
-                  placeholder="Enter your email"
-                  placeholderTextColor={COLORS.placeHolderText}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  value={email}
-                  onChangeText={setEmail}
-                />
-              </>
-            )}
-
-            <TouchableOpacity onPress={toggleInput}>
-              <Text style={styles.linkText}>
-                {usePhone ? 'Use Email Instead' : 'Use Phone Number Instead'}
-              </Text>
-            </TouchableOpacity>
+            <View style={[styles.inputWrapper, { marginTop: space.subtitleToInput }]}>
+            <Text style={styles.label}>Phone Number</Text>
+            <TextInput
+              ref={phoneInputRef}
+              style={styles.input}
+              placeholder="Enter your phone number"
+              placeholderTextColor={COLORS.placeHolderText}
+              keyboardType="phone-pad"
+              value={phone}
+              onChangeText={setPhone}
+            />
+            {phoneError ? <Text style={{ color: 'red', marginTop: 5 }}>{phoneError}</Text> : null}
+            </View>
+            <View>
+            <Text style={[styles.label, { marginTop: 20 }]}>Email</Text>
+            <TextInput
+              ref={emailInputRef}
+              style={styles.input}
+              placeholder="Enter your email"
+              placeholderTextColor={COLORS.placeHolderText}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={email}
+              onChangeText={setEmail}
+            />
+            {emailError ? <Text style={{ color: 'red', marginTop: 5 }}>{emailError}</Text> : null}
           </View>
 
           <TouchableOpacity

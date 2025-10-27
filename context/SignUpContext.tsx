@@ -10,7 +10,7 @@ type SignUpContextType = {
   password: string;
   setPassword: (password: string) => void;
   logoUri: string | null;        
-  setLogoUri: (uri: string) => void; 
+  setLogoUri: (uri: string | null) => void;
 };
 
 const SignUpContext = createContext<SignUpContextType | undefined>(undefined);

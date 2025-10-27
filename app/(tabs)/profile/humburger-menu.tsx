@@ -92,14 +92,6 @@ export default function MenuModal({ visible, onClose }: MenuModalProps) {
 
           <View style={styles.menuSeparator} />
 
-          <TouchableOpacity style={styles.menuItem} 
-        onPress={() => router.push('/settings/subscripion')}>
-          <MaterialIcons name="light-mode" size={20} color={COLORS.primary} />
-          <Text style={styles.menuText}>App Theme</Text>          
-        </TouchableOpacity>
-
-          <View style={styles.menuSeparator} />
-
           <TouchableOpacity style={styles.menuItem}
           onPress={() =>{onClose(); router.push('/settings')}}>          
             <Ionicons name="settings-outline" size={20} color={COLORS.primary} />

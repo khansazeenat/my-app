@@ -104,7 +104,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
         {/* Next Button */}
         <TouchableOpacity
         style={[styles.button, { marginTop: space.inputToButton }]}
-        onPress={() => router.replace('/(tabs)/home/index')}
+        onPress={() => router.replace('/(tabs)')}
         >
           <Text style={styles.buttonText}>Save Password</Text>
         </TouchableOpacity>

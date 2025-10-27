@@ -8,6 +8,8 @@ import { COLORS } from "../../../constants/colors";
 import * as ImagePicker from "expo-image-picker";
 import { useSignUp } from "@/context/SignUpContext"; // 👈 import context
 import { useState } from "react";
+import { Alert } from "react-native"; 
+
 
 const { height } = Dimensions.get("window");
 const space = {
@@ -18,8 +20,13 @@ const space = {
 export default function EditBusinessSettings() {
   const router = useRouter();
   const { businessName, setBusinessName, logoUri, setLogoUri } = useSignUp();
+
+  // Local state to hold changes before I save the Data 
+  const [localBusinessName, setLocalBusinessName] = useState(businessName);
+  const [localLogoUri, setLocalLogoUri] = useState(logoUri);
+
   const [editing, setEditing] = useState(false);
-  // Function to pick or replace logo
+  // Function to pick or replace logo (updates local state only)
   const pickLogo = async (): Promise<void> => {
     if (Platform.OS !== "web") {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -27,9 +34,9 @@ export default function EditBusinessSettings() {
         alert("Permission is required to select images from your gallery.");
         return;
       }
-    }
+    } 
 
-    const result = await ImagePicker.launchImageLibraryAsync({
+   const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
@@ -37,10 +44,33 @@ export default function EditBusinessSettings() {
     });
 
     if (!result.canceled) {
-      setLogoUri(result.assets[0].uri); // 👈 updates context
+      setLocalLogoUri(result.assets[0].uri); // update only local state
     }
   };
 
+  // Save function: updates the context and navigates back
+  const handleSave = () => {
+    Alert.alert(
+    "Save Changes?",
+    "Are you sure you want to save these changes?",
+    [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Yes, Save",
+        onPress: () => {
+          // Update context and navigate back
+          setBusinessName(localBusinessName);
+          setLogoUri(localLogoUri);
+          router.replace("/(tabs)/profile");
+        },
+      },
+    ],
+    { cancelable: true }
+  );
+  };
   return (
     <KeyboardAwareScrollView
       style={{ flex: 1, backgroundColor: COLORS.background1 }}
@@ -56,7 +86,7 @@ export default function EditBusinessSettings() {
           <Text style={styles.backText}> Change Business Settings</Text>
           <TouchableOpacity
             style={[styles.saveDetailBtn, { opacity: 1 }]}
-            onPress={() => router.replace("/add-item/edit-item")} // save is automatic via context
+            onPress={handleSave} 
           >
             <Text style={styles.saveDetatailText}>Save</Text>
           </TouchableOpacity>
@@ -67,13 +97,13 @@ export default function EditBusinessSettings() {
           <Text style={{ marginBottom: 6 }}>Change Business Name</Text>
           <TextInput
             style={[styles.input, { padding: 12, borderRadius: 10 }]}
-            value={businessName}
-            onChangeText={setBusinessName} // 👈 directly updates context
+            value={localBusinessName}
+            onChangeText={setLocalBusinessName} // 👈 directly updates context
           />
         </View>
         <View style={styles.menuSeparator} />
         {/* Logo picker */}
-        <View style={[styles.contactContainer]} >
+        <View style={[styles.contactContainer]}>
           <Text>Change Business Logo</Text>
           <TouchableOpacity
             onPress={pickLogo}
@@ -90,37 +120,39 @@ export default function EditBusinessSettings() {
               shadowRadius: 8,
               elevation: 3,
               backgroundColor: logoUri ? COLORS.background2 : undefined,
+              position: "relative", // make this relative so absolute circle stays in place
             }}
           >
-            {logoUri ? (
-              <>
-                <Image
-                  source={{ uri: logoUri }}
-                  style={{ width: 89, height: 89, borderRadius: 99 }}
-                />
-                <View
-                  style={{
-                    position: "absolute",
-                    bottom: -4,
-                    right: -4,
-                    backgroundColor: COLORS.primary,
-                    borderRadius: 12,
-                    padding: 4,
-                  }}
-                >
-                  <Ionicons name="pencil" size={12} color="#fff" />
-                </View>
-              </>
+            {localLogoUri ? (
+              <Image
+                source={{ uri: localLogoUri }}
+                style={{ width: 89, height: 89, borderRadius: 99 }}
+              />
             ) : (
               <Ionicons name="image-outline" size={36} color={COLORS.placeHolderText} />
             )}
+
+            {/* Circle always overlayed */}
+            <View
+              style={{
+                position: "absolute",
+                bottom: -4,
+                right: -4,
+                backgroundColor: COLORS.primary,
+                borderRadius: 12,
+                padding: 4,
+              }}
+            >
+              <Ionicons name={logoUri ? "pencil" : "add"} size={12} color="#fff" />
+            </View>
           </TouchableOpacity>
         </View>
+
         <View style={styles.menuSeparator} />
         {/* Email */} 
         <View style={[styles.contactContainer]}>
           <Text style={styles.text}>Email</Text>
-          <Text style={styles.text}>youremail@gmail.com</Text>
+          <Text style={styles.text}>example@gmail.com</Text>
         </View>
         <View style={styles.menuSeparator} />
         

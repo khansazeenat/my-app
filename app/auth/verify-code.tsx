@@ -76,7 +76,7 @@ if (index < 5) {
   const fullCode = newCode.join('');
   console.log('Full code:', fullCode);
   // ✅ Auto verify once all 6 digits are filled
-  router.push('/(tabs)');
+  router.push('/auth/newPassword');
 }
 
 

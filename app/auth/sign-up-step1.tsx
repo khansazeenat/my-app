@@ -42,7 +42,7 @@ const SignUp1 = () => {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.container}>
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity onPress={() => router.replace('/')}>
             <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
           </TouchableOpacity>
 

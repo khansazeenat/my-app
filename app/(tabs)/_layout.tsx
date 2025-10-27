@@ -2,11 +2,11 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { useFonts } from 'expo-font';
 import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { Octicons } from '@expo/vector-icons';
+import { Ionicons, Octicons } from '@expo/vector-icons';
 import SafeScreen from '@/assets/components/SafeScreen';
 import { COLORS } from '@/constants/colors';
-import { AddItemProvider } from '@/context/AddItemContext'; // ✅ import the provider
+import { GestureHandlerRootView } from 'react-native-gesture-handler'; // ✅ import
+import { SignUpProvider } from '@/context/SignUpContext';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   
@@ -26,63 +26,64 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <SafeScreen>
-      {/* ✅ Wrap all tabs with the provider */}
-      <AddItemProvider>
-        <Tabs
-          screenOptions={{        
-            headerShown: false, 
-            tabBarLabelPosition: "below-icon", 
-          }}
-        >      
-          <Tabs.Screen
-            name="index"
-            options={{
-              tabBarLabel: "Home",
-              tabBarActiveTintColor: COLORS.primary,
-              tabBarInactiveTintColor: COLORS.placeHolderText,
-              tabBarIcon: ({ color, size, focused }) => (
-                <Octicons
-                  name={focused ? "home-fill" : "home"}
-                  size={size}
-                  color={focused ? COLORS.primary : COLORS.placeHolderText}
-                />
-              ),
-            }}
-          />
-
-          <Tabs.Screen
-            name="add-item"
-            options={{
-              tabBarLabel: "",
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons
-                  name="add-circle"
-                  size={size + 20}
-                  color={COLORS.add}
-                />
-              ),
-              tabBarLabelStyle: { display: "none" },
-            }}
-          />
+    // ✅ Wrap everything in GestureHandlerRootView
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeScreen>
           
-          <Tabs.Screen
-            name="profile"
-            options={{
-              tabBarLabel: "Profile",
-              tabBarActiveTintColor: COLORS.primary,
-              tabBarInactiveTintColor: COLORS.placeHolderText,
-              tabBarIcon: ({ color, size, focused }) => (
-                <Octicons
-                  name={focused ? "person-fill" : "person"}
-                  size={size}
-                  color={focused ? COLORS.primary : COLORS.placeHolderText}
-                />
-              ),
+          <Tabs
+            screenOptions={{        
+              headerShown: false, 
+              tabBarLabelPosition: "below-icon", 
             }}
-          />
-        </Tabs>
-      </AddItemProvider>
-    </SafeScreen>
+          >      
+            <Tabs.Screen
+              name="index"
+              options={{
+                tabBarLabel: "Home",
+                tabBarActiveTintColor: COLORS.primary,
+                tabBarInactiveTintColor: COLORS.placeHolderText,
+                tabBarIcon: ({ size, focused }) => (
+                  <Octicons
+                    name={focused ? "home-fill" : "home"}
+                    size={size}
+                    color={focused ? COLORS.primary : COLORS.placeHolderText}
+                  />
+                ),
+              }}
+            />
+
+            <Tabs.Screen
+              name="add-item"
+              options={{
+                tabBarLabel: "",
+                tabBarIcon: ({ size }) => (
+                  <Ionicons
+                    name="add-circle"
+                    size={size + 15}
+                    color={COLORS.add}
+                    style={{ marginBottom:-10, marginRight:-10 }}
+                  />
+                ),
+              }}
+            />
+
+            <Tabs.Screen
+              name="profile"
+              options={{
+                tabBarLabel: "Profile",
+                tabBarActiveTintColor: COLORS.primary,
+                tabBarInactiveTintColor: COLORS.placeHolderText,
+                tabBarIcon: ({ size, focused }) => (
+                  <Octicons
+                    name={focused ? "person-fill" : "person"}
+                    size={size}
+                    color={focused ? COLORS.primary : COLORS.placeHolderText}
+                  />
+                ),
+              }}
+            />
+          </Tabs>
+      </SafeScreen>
+    </GestureHandlerRootView>
   );
 }

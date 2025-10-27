@@ -1,8 +1,10 @@
 import React from 'react';
 import { View, Text, StatusBar } from 'react-native';
 import { useFonts } from 'expo-font';
+import { AddItemProvider } from '@/context/AddItemContext';
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SoldItemsProvider } from '@/context/SoldItemsContext';
 import { SignUpProvider } from '@/context/SignUpContext'; // 👈 import provider
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -24,10 +26,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <SafeAreaProvider>
       <SignUpProvider>
+        <AddItemProvider>
+        <SoldItemsProvider>
         <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
         <Stack screenOptions={{ headerShown: false }}>
           {children}
         </Stack>
+        </SoldItemsProvider>
+        </AddItemProvider>
       </SignUpProvider>
     </SafeAreaProvider>
   );

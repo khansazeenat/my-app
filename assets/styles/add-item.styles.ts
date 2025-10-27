@@ -42,7 +42,6 @@ businessDetailheader:{
   },
   button: {
     backgroundColor: COLORS.primary,
-    opacity:0.5,
     borderRadius: 12,
     padding: 16,
     alignItems: "center",

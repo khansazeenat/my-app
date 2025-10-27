@@ -28,8 +28,29 @@ const SignIn = () => {
 
   const router = useRouter();
   
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState(''); // <-- for showing error messages
+
+  // Dummy credentials (for testing)
+  const correctEmail = "aisha@example.com";
+  const correctPassword = "12345";
+
+  const handleLogin = () => {
+      console.log("Email:", email, "Password:", password);
+    if (!email || !password) {
+      setError("Please fill in your Email and password");
+      return;
+    }
+
+    if (email.trim() === correctEmail && password.trim() === correctPassword) {
+      setError(""); // clear errors
+      router.replace('/(tabs)'); // logged in
+    } else {
+      setError("Email or password is incorrect");
+    }
+  };
 
   return (
     <SafeScreen>
@@ -55,7 +76,9 @@ const SignIn = () => {
           <Text style={styles.label}>Email</Text>
           <TextInput
             style={styles.input}
+            value={email}
             placeholder="Enter your email"
+            onChangeText={setEmail}
             placeholderTextColor={COLORS.placeHolderText}
           />
         </View>
@@ -97,12 +120,12 @@ const SignIn = () => {
 
           
         </View>
-
+{error ? <Text style={{ color: 'red', marginTop: 5 }}>{error}</Text> : null}
 
         {/* Sign In Button */}
         <TouchableOpacity 
         style={[styles.button, { marginTop: space.inputToButton }]} 
-        onPress={() => router.replace('/(tabs)')}>
+        onPress={handleLogin}>
           <Text style={styles.buttonText}>Log In</Text>
         </TouchableOpacity>
 

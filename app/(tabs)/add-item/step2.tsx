@@ -1,10 +1,10 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image, Platform } from "react-native";
+import { View, Text, TouchableOpacity, Image, Platform, Alert } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
-
+import Toast from "react-native-toast-message";
 import { styles } from "../../../assets/styles/add-item.styles";
 import { COLORS } from "../../../constants/colors";
 import { useAddItem } from "@/context/AddItemContext";
@@ -19,46 +19,87 @@ export default function AddItemStep2() {
     price: itemPrice,
     image: itemImage,
   });
+  
 
   const openPicker = async (): Promise<void> => {
-    if (Platform.OS !== "web") {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== "granted") {
-        alert("Permission is required to select images from your gallery.");
-        return;
+    try {
+      if (Platform.OS !== "web") {
+        const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
+        const { status: mediaStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (cameraStatus !== "granted" || mediaStatus !== "granted") {
+          alert("Camera and gallery permissions are required.");
+          return;
+        }
       }
-    }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.7,
-    });
-
-    if (!result.canceled) {
-      setItemImage(result.assets[0].uri);
+      Alert.alert(
+        "Select Image",
+        "Choose how you want to add your product image:",
+        [
+          {
+            text: "Take Photo",
+            onPress: async () => {
+              const result = await ImagePicker.launchCameraAsync({
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 0.7,
+              });
+              if (!result.canceled) {
+                setItemImage(result.assets[0].uri);
+              }
+            },
+          },
+          {
+            text: "Choose from Gallery",
+            onPress: async () => {
+              const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 0.7,
+              });
+              if (!result.canceled) {
+                setItemImage(result.assets[0].uri);
+              }
+            },
+          },
+          { text: "Cancel", style: "cancel" },
+        ]
+      );
+    } catch (error) {
+      console.log("Image picker error:", error);
     }
   };
 
-  const handleSave = () => {
-    const now = new Date();
-    const timestamp = `${now.getHours()}:${now.getMinutes()} ${now.getDate()}/${
-      now.getMonth() + 1
-    }/${now.getFullYear()}`;
+const handleSave = () => {
+  const now = new Date();
+  const timestamp = `${now.getHours()}:${now.getMinutes()} ${now.getDate()}/${
+    now.getMonth() + 1
+  }/${now.getFullYear()}`;
 
-    console.log("💾 Final item being saved:", {
-      name: itemName,
-      qty: itemQty,
-      price: itemPrice,
-      image: itemImage,
-      time: timestamp,
-    });
+  console.log("💾 Final item being saved:", {
+    name: itemName,
+    qty: itemQty,
+    price: itemPrice,
+    image: itemImage,
+    time: timestamp,
+  });
 
+  Toast.show({
+    type: "success",
+    text1: "Item Saved 🎉",
+    text2: `${itemName} added successfully!`,
+    position: "bottom",
+    visibilityTime: 1500, 
+  });
 
-    addItemToList(timestamp);
-    router.push("/(tabs)"); // push ensures Home updates
-  };
+  addItemToList(timestamp);
+
+  setTimeout(() => {
+    router.push("/profile"); // navigate after toast
+  }, 1500);
+};
 
   return (
     <KeyboardAwareScrollView

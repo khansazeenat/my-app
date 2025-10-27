@@ -67,10 +67,10 @@ stockSection: {
   marginLeft: "auto" 
 },
 itemImage: {
+  backgroundColor:COLORS.background2,
   borderRadius: 6,
-  backgroundColor: COLORS.background2,
-  width:48,
-  height:48,
+  width:58,
+  height:58,
   justifyContent: "center",
   alignItems: "center",
   marginRight: 6,
@@ -121,6 +121,9 @@ totalContainer:{
   borderTopRightRadius: 12,  
 },
 totalItemsContainer:{
+  marginTop:10,
+  marginHorizontal:-10,
+  marginBottom:-10,
   backgroundColor:COLORS.background1,
   alignContent:"center",
   flexDirection:"row",
@@ -136,7 +139,9 @@ totalItemsContainer:{
 clearBtn:{
   padding:8,
   borderRadius:12,
-  backgroundColor:COLORS.SearchBar,
+  backgroundColor:COLORS.background2,
+  width:100,
+  alignItems:'center'
 },
 comfirmBtn:{
   backgroundColor:COLORS.add,
@@ -152,7 +157,7 @@ clearText:{
   marginHorizontal:10,
   fontWeight:'semibold',
   fontSize:20,
-  color:COLORS.placeHolderText,
+  color:"red",
 },
 comfirmText:{
   marginHorizontal:10,

@@ -37,15 +37,16 @@ headerContainer:{
 businessName:{
     color:COLORS.primary,
     fontSize:16,
-    fontWeight:"regular",
+    fontWeight:"bold",
 },
 businessImage:{
     borderRadius:'50%',
-    backgroundColor:COLORS.primary,
+    borderWidth: 1,
     alignItems:'center',
     justifyContent:'center',
     height:60,
-    width:60
+    width:60,
+    borderColor:COLORS.placeHolderText,
 },    
 
 activitiesTitle: {
