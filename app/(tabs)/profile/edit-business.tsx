@@ -136,8 +136,8 @@ export default function EditBusinessSettings() {
             <View
               style={{
                 position: "absolute",
-                bottom: -4,
-                right: -4,
+                bottom: -1,
+                right: -0.5,
                 backgroundColor: COLORS.primary,
                 borderRadius: 12,
                 padding: 4,

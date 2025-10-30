@@ -3,12 +3,9 @@ import React from 'react';
 import { Stack } from 'expo-router';
 
 const AuthLayout = () => {
+  
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false, // remove the default header
-      }}
-    />
+    <Stack screenOptions={{ headerShown: false }} />
   );
 };
 

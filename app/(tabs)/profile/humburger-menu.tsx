@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   Modal,
+  Alert,
   Animated,
   TouchableWithoutFeedback,
   StyleSheet,
@@ -21,6 +22,17 @@ type MenuModalProps = {
 
 export default function MenuModal({ visible, onClose }: MenuModalProps) {
   
+  // Inside your component
+const confirmLogout = () => {
+  Alert.alert(
+    "Log out",
+    "Are you sure you want to log out?",
+    [
+      { text: "No", style: "cancel" },      // cancels the alert
+      { text: "Yes", onPress: () => router.replace('/auth/sign-in') }, // replace with actual logout later
+    ]
+  );
+};
   const slideAnim = useRef(new Animated.Value(0)).current;
   const pan = useRef(new Animated.Value(0)).current; // For dragging
 
@@ -99,9 +111,9 @@ export default function MenuModal({ visible, onClose }: MenuModalProps) {
           </TouchableOpacity>
 
           <View style={styles.menuSeparator} />
-          
+                   
           {/* Log out */}
-          <TouchableOpacity style={styles.menuItem} onPress={() => router.replace('/auth/sign-in')}>
+          <TouchableOpacity style={styles.menuItem} onPress={confirmLogout}>
             <Ionicons name="log-out-outline" size={20} color={COLORS.primary} />
             <Text style={styles.menuText}>Log out</Text>
           </TouchableOpacity>

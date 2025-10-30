@@ -92,12 +92,12 @@ button: {
     padding: 10,
     alignItems: "center",
     marginTop:20,
-    width:"50%",
+    width:200,
     alignSelf:"center",
   },
   buttonText: {
     color: COLORS.background1,
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
   },
 //Stock page Styles

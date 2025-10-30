@@ -1,6 +1,6 @@
 import { View, Text, TextInput, TouchableOpacity, Dimensions, StyleSheet } from 'react-native';
 import {styles} from '../../assets/styles/settings.styles'
-import {Ionicons, MaterialIcons} from '@expo/vector-icons'
+import {Ionicons,Foundation, MaterialIcons} from '@expo/vector-icons'
 import { spacing, COLORS } from "../../constants/colors";
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -39,7 +39,7 @@ const Settings = () => {
         </TouchableOpacity>
         
           <View style={styles.menuSeparator}/>
-
+          
         <TouchableOpacity style={styles.menuItem} 
         onPress={() => router.push('/settings/privacy-policy')}>
           <MaterialIcons name="lock-outline" size={20} color={COLORS.primary} />
@@ -52,6 +52,13 @@ const Settings = () => {
         onPress={() => router.push('/settings/terms-of-use')}>
           <Ionicons name="folder-outline" size={20} color={COLORS.primary} />
           <Text style={styles.menuText}>Terms Of Use</Text>          
+        </TouchableOpacity>
+          <View style={styles.menuSeparator}/>
+
+        <TouchableOpacity style={styles.menuItem} 
+          onPress={() => router.push('/settings/export')}>
+          <Foundation name="page-export-csv" size={20} color={COLORS.primary} />
+          <Text style={styles.menuText}>Download Information</Text>          
         </TouchableOpacity>
 
 

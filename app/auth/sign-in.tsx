@@ -46,6 +46,7 @@ const SignIn = () => {
 
     if (email.trim() === correctEmail && password.trim() === correctPassword) {
       setError(""); // clear errors
+        router.dismissAll();
       router.replace('/(tabs)'); // logged in
     } else {
       setError("Email or password is incorrect");

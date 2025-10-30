@@ -37,7 +37,7 @@ export default function Welcome() {
         {/* Google Sign-In Placeholder */}
         <TouchableOpacity 
           style={[styles.otherButton, { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 16 }]}
-          onPress={() => router.replace('/auth/sign-up-step1')}
+          onPress={() => router.push('/auth/sign-up-step1')}
         >
           <Image 
             source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg' }}
@@ -49,7 +49,7 @@ export default function Welcome() {
         {/* Regular Sign-Up */}
         <TouchableOpacity 
           style={styles.button} 
-          onPress={() => router.replace('/auth/sign-up-step1')}
+          onPress={() => router.push('/auth/sign-up-step1')}
         >
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
